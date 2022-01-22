@@ -23,6 +23,8 @@ export type BodyApi = {
   applyForceToCenter: (vec: Vec2, uuid?: ValidUUID) => void;
   applyLinearImpulse: (vec: Vec2, pos: Vec2, uuid?: ValidUUID) => void;
   setPosition: (vec: Vec2, uuid?: ValidUUID) => void;
+  getPosition: (uuid?: ValidUUID) => void;
+  setAwake: (flag:boolean, uuid?: ValidUUID) => void;
   setLinearVelocity: (vec: Vec2, uuid?: ValidUUID) => void;
   setAngle: (angle: number, uuid?: ValidUUID) => void;
   updateBody: (data: UpdateBodyData, uuid?: ValidUUID) => void;
@@ -33,6 +35,13 @@ export const useBodyApi = (passedUuid: ValidUUID): BodyApi => {
 
   const api = useMemo<BodyApi>(() => {
     return {
+      setAwake: (flag, uuid) => {
+        workerSetBody({
+          uuid: uuid ?? passedUuid,
+          method: 'setAwake',
+          methodParams: [flag],
+        });
+      },
       applyForceToCenter: (vec, uuid) => {
         workerSetBody({
           uuid: uuid ?? passedUuid,
@@ -52,6 +61,13 @@ export const useBodyApi = (passedUuid: ValidUUID): BodyApi => {
           uuid: uuid ?? passedUuid,
           method: 'setPosition',
           methodParams: [vec],
+        });
+      },
+      getPosition: (uuid) => {
+        workerSetBody({
+          uuid: uuid ?? passedUuid,
+          method: 'getPosition',
+          methodParams: [],
         });
       },
       setLinearVelocity: (vec, uuid) => {
